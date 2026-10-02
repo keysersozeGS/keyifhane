@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Keyifhane | Online İhaleli Batak & Oyun Salonu</title>
+    <meta name="description" content="Canlı online İhaleli Batak ve iskambil oyunları platformu. Arkadaşlarınla oyna veya botlarla antrenman yap!">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app" class="app-container">
+        
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="logo-icon">🂡</div>
+                <div class="logo-text">
+                    <h1>KEYİFHANE</h1>
+                    <span>ONLINE OYUN SALONU</span>
+                </div>
+            </div>
+            <div class="user-badge" id="header-user-badge">
+                <span id="user-status-dot" class="status-dot disconnected"></span>
+                <span id="user-display-name">Misafir</span>
+            </div>
+        </header>
+
+        <!-- MAIN VIEW CONTAINER -->
+        <main class="main-content">
+            
+            <!-- 1. LANDING & GAME SELECTION VIEW -->
+            <section id="view-landing" class="view-screen active">
+                <div class="hero-section">
+                    <h2>Türkiye'nin En Keyifli Online Oyun Masası</h2>
+                    <p>Canlı rakiplerle yarışın, oda oluşturun veya botlarla hemen batak oynayın!</p>
+                </div>
+
+                <div class="player-name-card glass-panel">
+                    <label for="player-name-input">Oyuncu Adınız:</label>
+                    <div class="input-group">
+                        <input type="text" id="player-name-input" placeholder="Adınızı yazın..." maxlength="15">
+                        <button id="btn-save-name" class="btn btn-secondary" onclick="window.keyifhaneApp.savePlayerName()">Kaydet</button>
+                    </div>
+                </div>
+
+                <div class="game-cards-grid">
+                    <div class="game-card featured" id="card-batak">
+                        <div class="badge badge-gold">POPÜLER</div>
+                        <div class="game-card-icon">♠</div>
+                        <h3>İhaleli Batak</h3>
+                        <p>4 Kişilik İhale, Koz Seçimi ve Stratejik Kart Oyunu.</p>
+                        <button id="btn-open-batak-lobby" class="btn btn-primary btn-block" onclick="window.keyifhaneApp.openLobby('BATAK')">Masalara Katıl ➔</button>
+                    </div>
+
+                    <div class="game-card disabled">
+                        <div class="badge badge-muted">YAKINDA</div>
+                        <div class="game-card-icon">♔</div>
+                        <h3>King</h3>
+                        <p>Ceza ve Koz Oyunlarıyla Klasik King Heyecanı.</p>
+                        <button class="btn btn-disabled btn-block" disabled>Çok Yakında</button>
+                    </div>
+
+                    <div class="game-card disabled">
+                        <div class="badge badge-muted">YAKINDA</div>
+                        <div class="game-card-icon">🀄</div>
+                        <h3>Okey 101</h3>
+                        <p>Dizilim ve Taş Çekmeli Klasik Türk Okeyi.</p>
+                        <button class="btn btn-disabled btn-block" disabled>Çok Yakında</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. LOBBY VIEW -->
+            <section id="view-lobby" class="view-screen">
+                <div class="lobby-header">
+                    <button class="btn btn-icon" onclick="keyifhaneApp.showView('view-landing')">← Ana Menü</button>
+                    <h2>İhaleli Batak Salonu</h2>
+                    <button class="btn btn-accent" onclick="keyifhaneApp.quickPlay()">⚡ Hızlı Oyna</button>
+                </div>
+
+                <div class="lobby-actions-bar">
+                    <button class="btn btn-primary" onclick="keyifhaneApp.showCreateRoomModal()">+ Masa Oluştur</button>
+                    <div class="join-code-group">
+                        <input type="text" id="join-room-code-input" placeholder="Masa Kodu (örn: ROOM-1234)" style="text-transform: uppercase;">
+                        <button class="btn btn-secondary" onclick="keyifhaneApp.joinRoomByCode()">Koda Katıl</button>
+                    </div>
+                </div>
+
+                <div class="room-list-container glass-panel">
+                    <h3>Aktif Masalar</h3>
+                    <div id="room-list-grid" class="room-grid">
+                        <div class="empty-state">Henüz açık masa yok. Hemen yeni bir masa oluşturun!</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. GAME ROOM VIEW -->
+            <section id="view-game" class="view-screen">
+                <div class="game-top-bar">
+                    <div class="room-info">
+                        <span id="room-title-display" class="room-title">Masa #101</span>
+                        <span id="room-code-display" class="room-code" title="Tıkla ve Kodu Kopyala" onclick="keyifhaneApp.copyRoomCode()">ROOM-XXXXXX</span>
+                    </div>
+
+                    <div class="game-status-pill">
+                        <span id="game-round-info">Tur 1 / 5</span>
+                        <span id="game-trump-display" class="trump-badge">Koz: -</span>
+                    </div>
+
+                    <div class="game-controls-right">
+                        <button class="btn btn-sm btn-secondary" onclick="keyifhaneApp.toggleScoreboard()">📊 Skorlar</button>
+                        <button class="btn btn-sm btn-danger" onclick="keyifhaneApp.leaveRoom()">Ayrıl ✕</button>
+                    </div>
+                </div>
+
+                <!-- BATAK TABLE MAT -->
+                <div class="batak-table">
+                    <div class="table-felt"></div>
+                    <div class="table-wood-border"></div>
+
+                    <!-- SEAT NORTH (Player 2) -->
+                    <div class="seat seat-north" id="seat-2">
+                        <div class="player-avatar">🤖</div>
+                        <div class="player-info">
+                            <span class="p-name">Bot 3</span>
+                            <span class="p-bid">İhale: -</span>
+                            <span class="p-tricks">El: 0</span>
+                        </div>
+                        <div class="card-count-badge" id="card-count-2">13</div>
+                    </div>
+
+                    <!-- SEAT WEST (Player 1) -->
+                    <div class="seat seat-west" id="seat-1">
+                        <div class="player-avatar">🤖</div>
+                        <div class="player-info">
+                            <span class="p-name">Bot 2</span>
+                            <span class="p-bid">İhale: -</span>
+                            <span class="p-tricks">El: 0</span>
+                        </div>
+                        <div class="card-count-badge" id="card-count-1">13</div>
+                    </div>
+
+                    <!-- SEAT EAST (Player 3) -->
+                    <div class="seat seat-east" id="seat-3">
+                        <div class="player-avatar">🤖</div>
+                        <div class="player-info">
+                            <span class="p-name">Bot 4</span>
+                            <span class="p-bid">İhale: -</span>
+                            <span class="p-tricks">El: 0</span>
+                        </div>
+                        <div class="card-count-badge" id="card-count-3">13</div>
+                    </div>
+
+                    <!-- CENTER TRICK MAT -->
+                    <div class="trick-center-mat">
+                        <div class="center-status-msg" id="table-center-msg">Oyuncular Bekleniyor...</div>
+                        
+                        <!-- PLAYED CARDS SLOTS -->
+                        <div class="played-card-slot slot-south" id="slot-0"></div>
+                        <div class="played-card-slot slot-west" id="slot-1"></div>
+                        <div class="played-card-slot slot-north" id="slot-2"></div>
+                        <div class="played-card-slot slot-east" id="slot-3"></div>
+                    </div>
+
+                    <!-- SEAT SOUTH (YOU - Player 0) -->
+                    <div class="seat seat-south" id="seat-0">
+                        <div class="player-avatar">👤</div>
+                        <div class="player-info">
+                            <span class="p-name" id="my-seat-name">Siz</span>
+                            <span class="p-bid" id="my-seat-bid">İhale: -</span>
+                            <span class="p-tricks" id="my-seat-tricks">El: 0</span>
+                        </div>
+                    </div>
+
+                    <!-- PLAYER HAND (CARDS FAN) -->
+                    <div class="my-hand-container" id="my-hand-container">
+                        <!-- Card elements injected dynamically -->
+                    </div>
+
+                    <!-- BIDDING CONTROL PANEL -->
+                    <div id="bidding-panel" class="bidding-overlay glass-panel hidden">
+                        <h4>İhaye Girin veya Pas Deyin</h4>
+                        <div class="bidding-buttons">
+                            <button class="btn btn-secondary" onclick="keyifhaneApp.sendBid(0)">PAS</button>
+                            <button class="btn btn-bid" onclick="keyifhaneApp.sendBid(4)">4</button>
+                            <button class="btn btn-bid" onclick="keyifhaneApp.sendBid(5)">5</button>
+                            <button class="btn btn-bid" onclick="keyifhaneApp.sendBid(6)">6</button>
+                            <button class="btn btn-bid" onclick="keyifhaneApp.sendBid(7)">7</button>
+                            <button class="btn btn-bid" onclick="keyifhaneApp.sendBid(8)">8</button>
+                            <button class="btn btn-bid" onclick="keyifhaneApp.sendBid(9)">9</button>
+                            <button class="btn btn-bid" onclick="keyifhaneApp.sendBid(10)">10</button>
+                            <button class="btn btn-bid" onclick="keyifhaneApp.sendBid(11)">11</button>
+                            <button class="btn btn-bid" onclick="keyifhaneApp.sendBid(12)">12</button>
+                            <button class="btn btn-bid" onclick="keyifhaneApp.sendBid(13)">13 (Batak)</button>
+                        </div>
+                    </div>
+
+                    <!-- TRUMP SELECT PANEL -->
+                    <div id="trump-panel" class="trump-overlay glass-panel hidden">
+                        <h4>Koz Rengini Seçin</h4>
+                        <div class="trump-buttons">
+                            <button class="btn btn-trump black" onclick="keyifhaneApp.sendTrump('SPADES')">♠ Maça</button>
+                            <button class="btn btn-trump red" onclick="keyifhaneApp.sendTrump('HEARTS')">♥ Kupa</button>
+                            <button class="btn btn-trump red" onclick="keyifhaneApp.sendTrump('DIAMONDS')">♦ Karo</button>
+                            <button class="btn btn-trump black" onclick="keyifhaneApp.sendTrump('CLUBS')">♣ Sinek</button>
+                        </div>
+                    </div>
+
+                    <!-- START GAME BUTTON (FOR HOST / WAITING STATE) -->
+                    <div id="start-game-overlay" class="start-game-overlay hidden">
+                        <button class="btn btn-primary btn-lg pulse" onclick="keyifhaneApp.startGame()">🎮 Oyunu Başlat</button>
+                    </div>
+
+                    <!-- NEXT ROUND BUTTON (FOR ROUND OVER STATE) -->
+                    <div id="next-round-overlay" class="next-round-overlay hidden">
+                        <div class="round-summary-card glass-panel">
+                            <h3>Tur Tamamlandı!</h3>
+                            <div id="round-summary-scores"></div>
+                            <button class="btn btn-primary btn-lg" onclick="keyifhaneApp.nextRound()">Sonraki Tur ➔</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHAT FLOATING PANEL -->
+                <div class="chat-floating-box glass-panel" id="chat-box">
+                    <div class="chat-header" onclick="keyifhaneApp.toggleChat()">
+                        <span>💬 Masa Sohbeti</span>
+                        <span id="chat-toggle-icon">▲</span>
+                    </div>
+                    <div class="chat-messages" id="chat-messages-list"></div>
+                    <div class="chat-input-row">
+                        <input type="text" id="chat-input" placeholder="Mesaj yaz..." maxlength="100">
+                        <button class="btn btn-sm btn-primary" onclick="keyifhaneApp.sendChat()">Gönder</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- CREATE ROOM MODAL -->
+        <div id="modal-create-room" class="modal-overlay hidden">
+            <div class="modal-content glass-panel">
+                <div class="modal-header">
+                    <h3>Yeni Masa Oluştur</h3>
+                    <button class="btn-close" onclick="keyifhaneApp.closeModal('modal-create-room')">✕</button>
+                </div>
+                <div class="modal-body">
+                    <label for="create-room-name">Masa Adı:</label>
+                    <input type="text" id="create-room-name" placeholder="Örn: Kral Masası" maxlength="20">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="keyifhaneApp.closeModal('modal-create-room')">İptal</button>
+                    <button class="btn btn-primary" onclick="keyifhaneApp.submitCreateRoom()">Masa Aç</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCOREBOARD MODAL -->
+        <div id="modal-scoreboard" class="modal-overlay hidden">
+            <div class="modal-content glass-panel">
+                <div class="modal-header">
+                    <h3>📊 Skorbord</h3>
+                    <button class="btn-close" onclick="keyifhaneApp.closeModal('modal-scoreboard')">✕</button>
+                </div>
+                <div class="modal-body">
+                    <table class="scoreboard-table">
+                        <thead>
+                            <tr>
+                                <th>Oyuncu</th>
+                                <th>İhale</th>
+                                <th>Aldığı El</th>
+                                <th>Toplam Puan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scoreboard-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="audio.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
